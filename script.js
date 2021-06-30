@@ -18,26 +18,27 @@ $(document).ready(()=>{
 
     const ctx = canvas.getContext("2d");
 
-    grayBar=()=>{
-        ctx.fillStyle = "gray"
+    grayBar=(color)=>{
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.fillRect(xr,yr,wr,hr);
     
-        ctx.fillStyle = "gray"
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(xc1,yc,r,0.5*Math.PI,1.5*Math.PI);
         ctx.fill();
         
+        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(xc2,yc,r,1.5*Math.PI,0.5*Math.PI);
         ctx.fill();
     }
 
-    grayBar();
+    grayBar("gray");
 
-    $("#reset").click(grayBar);
+    $("#reset").click(()=>{grayBar('gray')});
 
-    var err_triggered = false;
+    var err_triggegreen = false;
     $("#go").click(()=>{
         var input = document.getElementById('percentage').value;
         document.getElementById('percentage').value = "";
@@ -45,11 +46,11 @@ $(document).ready(()=>{
         input = parseFloat(input);
         if(isNaN(input) === true || typeof(input) !== "number"){
             err.classList.remove('error');
-            err_triggered = true;
+            err_triggegreen = true;
         }else{
-            if(err_triggered === true){
+            if(err_triggegreen === true){
                 err.classList.add('error');
-                err_triggered = false;
+                err_triggegreen = false;
             }
             input = Math.round(input*100)/10000;
 
@@ -63,35 +64,46 @@ $(document).ready(()=>{
             if(fillLength <= r){
                 var theta = Math.acos((r-fillLength)/r);
                 var alpha = Math.PI - theta;
-                var phi = 2 * theta;
-                ctx.fillStyle = "red";
+                var phi = alpha+ (2 * theta);
+                ctx.fillStyle = "green";
                 ctx.beginPath();
-                ctx.arc(xc1,yc,r,alpha, alpha+phi);
+                ctx.arc(xc1,yc,r,alpha,phi);
                 ctx.fill();
             }else if(fillLength <= r + wr ){
-                ctx.fillStyle = "red"
+                ctx.fillStyle = "green"
                 ctx.beginPath();
                 ctx.arc(xc1,yc,r,0.5*Math.PI,1.5*Math.PI);
                 ctx.fill();
                 
-                ctx.fillStyle = "red"
+                ctx.fillStyle = "green"
                 ctx.beginPath();
                 ctx.fillRect(xr,yr,fillLength-r,hr);
                 
-            }else{
-                ctx.fillStyle = "red"
+            }else if(fillLength < barLength){
+                var L = fillLength-r-wr
+                var newR=(Math.pow(L, 2)+Math.pow(hr/2, 2))/(2*L);
+                var theta = Math.atan((hr/2)/(newR-L));
+                var newX=xc2-(newR-L);
+                var alpha = (2*Math.PI) - theta;
+                var phi = theta
+
+                console.log(theta, xc2, newX, newR, r, alpha, phi)
+
+                ctx.fillStyle = "green"
                 ctx.beginPath();
                 ctx.fillRect(xr,yr,wr,hr);
-
-                ctx.fillStyle = "red"
-                ctx.beginPath();
-                ctx.arc(xc2,yc,fillLength-r-wr,1.5*Math.PI,0.5*Math.PI);
-                ctx.fill();
             
-                ctx.fillStyle = "red"
+                ctx.fillStyle = "green"
                 ctx.beginPath();
                 ctx.arc(xc1,yc,r,0.5*Math.PI,1.5*Math.PI);
                 ctx.fill();
+
+                ctx.fillStyle = "green"
+                ctx.beginPath();
+                ctx.arc(newX,yc,newR,alpha,phi);
+                ctx.fill();
+            }else{
+                grayBar("green");
             }
             
         }
