@@ -1,0 +1,14 @@
+body {
+    margin: 0px;
+}
+.form{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#err{
+    color: red;
+}
+.error{
+    visibility: hidden;
+}
